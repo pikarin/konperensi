@@ -25,49 +25,7 @@ class ConferenceResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Conference')
-                    ->helperText('The name of the conference.')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\MarkdownEditor::make('description')
-                    ->required(),
-                Forms\Components\DateTimePicker::make('start_date')
-                    ->native(false)
-                    ->required(),
-                Forms\Components\DateTimePicker::make('end_date')
-                    ->native(false)
-                    ->required(),
-                Forms\Components\Toggle::make('is_published')
-                    ->label('Published')
-                    ->default(false)
-                    ->helperText('Toggle to publish the conference.'),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'draft' => 'Draft',
-                        'published' => 'Published',
-                        'archived' => 'Archived',
-                    ])
-                    ->required(),
-                Forms\Components\Select::make('region')
-                    ->live()
-                    ->enum(Region::class)
-                    ->options(Region::class)
-                    ->afterStateUpdated(fn ($state, callable $set) => $set('venue_id', null)),
-                Forms\Components\Select::make('venue_id')
-                    ->searchable()
-                    ->preload()
-                    ->createOptionForm(Venue::getForm())
-                    ->editOptionForm(fn ($record) => $record ? Venue::getForm() : [])
-                    ->relationship('venue', 'name', modifyQueryUsing: function (Builder $query, Forms\Get $get) {
-                        return $query->where('region', $get('region'));
-                    }),
-                Forms\Components\CheckboxList::make('speakers')
-                    ->relationship('speakers', 'name')
-                    ->options(Speaker::all()->pluck('name', 'id'))
-                    ->required(),
-            ]);
+            ->schema(Conference::getForm());
     }
 
     public static function table(Table $table): Table
