@@ -32,6 +32,11 @@ class Speaker extends Model
         return [
             Forms\Components\TextInput::make('name')
                 ->required(),
+            Forms\Components\FileUpload::make('avatar')
+                ->avatar()
+                ->directory('avatars')
+                ->imageEditor()
+                ->maxSize(1024 * 1024 * 10),
             Forms\Components\TextInput::make('email')
                 ->email()
                 ->required(),
