@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Filament\Forms;
 use App\Enums\Region;
+use App\Enums\Status;
+use Livewire\Component as Livewire;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,6 +23,7 @@ class Conference extends Model
     {
         return [
             'id' => 'integer',
+            'status' => Status::class,
             'start_date' => 'datetime',
             'end_date' => 'datetime',
             'region' => Region::class,
@@ -69,6 +72,7 @@ class Conference extends Model
                         ->columns(1)
                         ->schema([
                             Forms\Components\Select::make('status')
+                                ->enum(Status::class)
                                 ->options([
                                     'draft' => 'Draft',
                                     'published' => 'Published',
@@ -99,10 +103,32 @@ class Conference extends Model
                         }),
                 ]),
 
-            Forms\Components\CheckboxList::make('speakers')
-                ->relationship('speakers', 'name')
-                ->options(Speaker::all()->pluck('name', 'id'))
-                ->required(),
+            Forms\Components\Actions::make([
+                Forms\Components\Actions\Action::make('star')
+                    ->label('Fill with Factory Data')
+                    ->icon('heroicon-m-star')
+                    ->visible(function (string $operation) {
+                        if ($operation !== 'create') {
+                            return false;
+                        }
+
+                        if (app()->environment('local')) {
+                            return true;
+                        }
+
+                        return false;
+                    })
+                    ->action(function (Livewire $livewire) {
+                        $data = Conference::factory()->make()->toArray();
+
+                        $livewire->form->fill($data);
+                    }),
+            ]),
+
+            // Forms\Components\CheckboxList::make('speakers')
+            //     ->relationship('speakers', 'name')
+            //     ->options(Speaker::all()->pluck('name', 'id'))
+            //     ->required(),
         ];
     }
 }

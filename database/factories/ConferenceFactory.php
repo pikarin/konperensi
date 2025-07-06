@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\Region;
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use App\Models\Conference;
@@ -24,10 +26,10 @@ class ConferenceFactory extends Factory
         return [
             'name' => fake()->name(),
             'description' => fake()->text(),
-            'start_date' => fake()->dateTime(),
-            'end_date' => fake()->dateTime(),
-            'status' => fake()->word(),
-            'region' => fake()->word(),
+            'start_date' => now()->addMonths(9),
+            'end_date' => now()->addMonths(9)->addDays(2),
+            'status' => fake()->randomElement(Status::class),
+            'region' => fake()->randomElement(Region::class),
             'venue_id' => null,
         ];
     }
