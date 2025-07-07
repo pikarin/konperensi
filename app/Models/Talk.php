@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\TalkLength;
+use App\Enums\TalkStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,6 +21,8 @@ class Talk extends Model
         return [
             'id' => 'integer',
             'speaker_id' => 'integer',
+            'status' => TalkStatus::class,
+            'length' => TalkLength::class,
         ];
     }
 
